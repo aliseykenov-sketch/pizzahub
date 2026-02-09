@@ -60,6 +60,19 @@ db.serialize(() => {
         FOREIGN KEY (user_id) REFERENCES users (id)
     )`);
 
+    // Добавляем недостающие колонки если их нет
+    db.run(`ALTER TABLE orders ADD COLUMN comment TEXT`, (err) => {
+        if (err && !err.message.includes('duplicate column name')) {
+            console.error('Ошибка добавления колонки comment:', err);
+        }
+    });
+    
+    db.run(`ALTER TABLE orders ADD COLUMN delivery_time TEXT`, (err) => {
+        if (err && !err.message.includes('duplicate column name')) {
+            console.error('Ошибка добавления колонки delivery_time:', err);
+        }
+    });
+
     // Таблица элементов заказа
     db.run(`CREATE TABLE IF NOT EXISTS order_items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -96,7 +109,7 @@ db.serialize(() => {
             ["Төрт сыр", "Моцарелла, пармезан, горгонзола, чеддер", 580, "vegetarian", "images/946.970@2x.jpg"],
             ["Мексикалық", "Қызанақ соусы, моцарелла, сиыр еті, халапеньо бұрышы", 620, "spicy", "images/photo_560253.jpg"],
             ["Вегетариан", "Қызанақ соусы, моцарелла, саңырауқұлақ, бұрыш, зәйтүн", 480, "vegetarian", "images/840ed927c47fe8d982edd1dfc63b5d26.png"],
-            ["Карбонара", "Сүтті соус, моцарелла, бекон, пармезан", 590, "meat", "images/Карбонара.jpg"],
+            ["Карбонара", "Сүтті соус, моцарелла, бекон, пармезан", 590, "meat", "images/carbonara.jpg"],
             ["Диябло", "Қызанақ соусы, моцарелла, пепперони, халапеньо, ащы бұрыш", 650, "spicy", "images/1752576330363-350x253.jpeg"]
         ];
 
@@ -112,17 +125,24 @@ db.serialize(() => {
 
 // Middleware для проверки JWT токена
 const authenticateToken = (req, res, next) => {
+    console.log('🔐 Проверка авторизации для:', req.method, req.url);
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
+    console.log('📋 Authorization header:', authHeader);
+    console.log('🎫 Token:', token ? 'присутствует' : 'отсутствует');
+
     if (!token) {
+        console.log('❌ Токен отсутствует');
         return res.status(401).json({ error: 'Требуется авторизация' });
     }
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
+            console.log('❌ Ошибка верификации токена:', err.message);
             return res.status(403).json({ error: 'Недействительный токен' });
         }
+        console.log('✅ Токен верифицирован, пользователь:', user);
         req.user = user;
         next();
     });
@@ -250,22 +270,31 @@ app.get('/api/pizzas', (req, res) => {
 // Создание заказа
 app.post('/api/orders', authenticateToken, (req, res) => {
     try {
+        console.log('🛒 Получен запрос на создание заказа');
+        console.log('📦 Тело запроса:', req.body);
+        console.log('👤 Пользователь:', req.user);
+        
         const { items, total, address, phone, comment, delivery_time } = req.body;
         const userId = req.user.id;
 
         if (!items || items.length === 0) {
+            console.log('❌ Корзина пуста');
             return res.status(400).json({ error: 'Корзина пуста' });
         }
 
+        console.log('✅ Данные заказа валидны, создаем заказ...');
+        
         // Создание заказа
         db.run('INSERT INTO orders (user_id, total, address, phone, comment, delivery_time) VALUES (?, ?, ?, ?, ?, ?)',
             [userId, total, address, phone, comment, delivery_time],
             function(err) {
                 if (err) {
+                    console.error('❌ Ошибка при создании заказа:', err);
                     return res.status(500).json({ error: 'Ошибка при создании заказа' });
                 }
 
                 const orderId = this.lastID;
+                console.log('✅ Заказ создан, ID:', orderId);
 
                 // Добавление элементов заказа
                 const stmt = db.prepare('INSERT INTO order_items (order_id, pizza_id, quantity, price) VALUES (?, ?, ?, ?)');
