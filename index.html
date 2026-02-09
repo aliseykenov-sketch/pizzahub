@@ -155,6 +155,18 @@
         <h2>📍 Заказ беру</h2>
         <form id="addressForm">
             <div class="form-group">
+                <label for="deliveryCity">Қала *</label>
+                <select id="deliveryCity" required>
+                    <option value="">Қаланы таңдаңыз</option>
+                    <option value="Алматы">Алматы</option>
+                    <option value="Астана">Астана</option>
+                    <option value="Шымкент">Шымкент</option>
+                    <option value="Ақтобе">Ақтобе</option>
+                    <option value="Қарағанды">Қарағанды</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
                 <label for="deliveryAddress">Жеткізу мекенжайы *</label>
                 <textarea id="deliveryAddress" placeholder="Көше, үй, пәтер" required></textarea>
             </div>
@@ -178,10 +190,40 @@
                     </label>
                     <label>
                         <input type="radio" name="deliveryTime" value="scheduled">
-                        Белгілі уақытта
+                        Кейінірек
                     </label>
                 </div>
                 <input type="time" id="scheduledTime" style="display: none; margin-top: 10px;">
+            </div>
+            
+            <div class="ingredient-options">
+                <h3>🥗 Ингредиенттерді алып тастау</h3>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="removeMayonnaise" value="mayonnaise">
+                        Майонезді алып тастау
+                    </label>
+                    <label>
+                        <input type="checkbox" name="removeOnion" value="onion">
+                        Пиязды алып тастау
+                    </label>
+                    <label>
+                        <input type="checkbox" name="removeTomato" value="tomato">
+                        Қызанақты алып тастау
+                    </label>
+                    <label>
+                        <input type="checkbox" name="removeOlives" value="olives">
+                        Зәйтүнді алып тастау
+                    </label>
+                    <label>
+                        <input type="checkbox" name="extraCheese" value="extraCheese">
+                        Қосымша сыр қосу (+150 ₸)
+                    </label>
+                    <label>
+                        <input type="checkbox" name="extraMeat" value="extraMeat">
+                        Қосымша ет қосу (+200 ₸)
+                    </label>
+                </div>
             </div>
             
             <div class="order-summary">
