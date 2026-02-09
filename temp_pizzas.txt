@@ -1,0 +1,12 @@
+// Добавление начальных пицц
+    const stmt = db.prepare("INSERT OR IGNORE INTO pizzas (name, description, price, category, image) VALUES (?, ?, ?, ?, ?)");
+    const pizzas = [
+        ["Маргарита", "Қызанақ соусы, моцарелла, базилик", 450, "vegetarian", "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=300&fit=crop"],
+        ["Пепперони", "Қызанақ соусы, моцарелла, пепперони", 520, "meat", "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=500&h=300&fit=crop"],
+        ["Гавайская", "Қызанақ соусы, моцарелла, ветчина, ананас", 550, "meat", "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=300&fit=crop"],
+        ["Төрт сыр", "Моцарелла, пармезан, горгонзола, чеддер", 580, "vegetarian", "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=300&fit=crop"],
+        ["Мексикалық", "Қызанақ соусы, моцарелла, сиыр еті, халапеньо бұрышы", 620, "spicy", "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=300&fit=crop"],
+        ["Вегетариан", "Қызанақ соусы, моцарелла, саңырауқұлақ, бұрыш, зәйтүн", 480, "vegetarian", "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=300&fit=crop"],
+        ["Карбонара", "Сүтті соус, моцарелла, бекон, пармезан", 590, "meat", "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=300&fit=crop"],
+        ["Диавола", "Қызанақ соусы, моцарелла, пепперони, халапеньо, ащы бұрыш", 650, "spicy", "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=300&fit=crop"]
+    ];

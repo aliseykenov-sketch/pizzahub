@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍕 PizzaHub - Пицца жеткізу</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">🍕 PizzaHub</div>
+        <ul class="nav-links">
+            <li><a href="#menu">Мәзір</a></li>
+            <li><a href="#about">Біз туралы</a></li>
+            <li><a href="#contacts">Байланыс</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="btn-icon" id="loginBtn">
+                <i class="fas fa-user"></i>
+                <span>Кіру</span>
+            </button>
+            <button class="btn-icon cart-btn" id="cartBtn">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-content">
+        <h1>🍕 Қаладағы ең жақсы пицца</h1>
+        <p>30 минутта жеткізу немесе тегін пицца!</p>
+        <button class="btn-primary" onclick="scrollToMenu()">Мәзірді қарау</button>
+    </div>
+    <div class="hero-image">
+        <img src="images/Hero.jpg" alt="Пицца">
+    </div>
+</header>
+
+<section id="menu" class="menu-section">
+    <div class="container">
+        <h2>🔥 Біздің мәзір</h2>
+        <div class="category-tabs">
+            <button class="tab-btn active" data-category="all">Барлық пиццалар</button>
+            <button class="tab-btn" data-category="meat">Етті</button>
+            <button class="tab-btn" data-category="vegetarian">Вегетариан</button>
+            <button class="tab-btn" data-category="spicy">Ащы</button>
+        </div>
+        <div class="pizza-grid" id="pizzaGrid">
+            <!-- Пиццалар JavaScript арқылы қосылады -->
+        </div>
+    </div>
+</section>
+
+<section id="about" class="about-section">
+    <div class="container">
+        <h2>🏆 Неге бізді таңдайды</h2>
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-clock"></i>
+                <h3>Жылдам жеткізу</h3>
+                <p>30 минутта жеткіземіз немесе тегін</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-leaf"></i>
+                <h3>Жаңа өнімдер</h3>
+                <p>Тек жаңа және сапалы өнімдер</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-award"></i>
+                <h3>Ең жақсы дәм</h3>
+                <p>Көптеген сыйлықтардың иегері</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contacts" class="contacts-section">
+    <div class="container">
+        <h2>📞 Байланыс</h2>
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <span>+7 (999) 123-45-67</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <span>info@pizzahub.kz</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Алматы қ., Пицца көшесі, 1</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>© 2026 PizzaHub | Барлық құқықтар қорғалған</p>
+    </div>
+</footer>
+
+<!-- Модальдық терезелер -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Аккаунтқа кіру</h2>
+        <form id="loginForm">
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Құпиясөз" required>
+            <button type="submit" class="btn-primary">Кіру</button>
+        </form>
+        <p>Аккаунт жоқ па? <a href="#" id="showRegister">Тіркелу</a></p>
+    </div>
+</div>
+
+<div id="registerModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Тіркелу</h2>
+        <form id="registerForm">
+            <input type="text" placeholder="Аты" required>
+            <input type="email" placeholder="Email" required>
+            <input type="tel" placeholder="Телефон" required>
+            <input type="password" placeholder="Құпиясөз" required>
+            <button type="submit" class="btn-primary">Тіркелу</a></button>
+        </form>
+        <p>Аккаунт бар ма? <a href="#" id="showLogin">Кіру</a></p>
+    </div>
+</div>
+
+<div id="cartModal" class="modal">
+    <div class="modal-content cart-modal">
+        <span class="close">&times;</span>
+        <h2>🛒 Себет</h2>
+        <div id="cartItems"></div>
+        <div class="cart-summary">
+            <div class="total">
+                <span>Жалпы:</span>
+                <span id="cartTotal">0 ₸</span>
+            </div>
+            <button class="btn-primary" id="checkoutBtn">Заказ беру</button>
+        </div>
+    </div>
+</div>
+
+<div id="addressModal" class="modal">
+    <div class="modal-content address-modal">
+        <span class="close">&times;</span>
+        <h2>📍 Заказ беру</h2>
+        <form id="addressForm">
+            <div class="form-group">
+                <label for="deliveryAddress">Жеткізу мекенжайы *</label>
+                <textarea id="deliveryAddress" placeholder="Көше, үй, пәтер" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="deliveryPhone">Телефон *</label>
+                <input type="tel" id="deliveryPhone" placeholder="+7 (999) 123-45-67" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="orderComment">Заказға комментарий</label>
+                <textarea id="orderComment" placeholder="Жеткізу ерекшеліктері, уақыт және т.б."></textarea>
+            </div>
+            
+            <div class="delivery-options">
+                <h3>⏰ Жеткізу уақыты</h3>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="deliveryTime" value="asap" checked>
+                        Мүмкіндігінше жылдам
+                    </label>
+                    <label>
+                        <input type="radio" name="deliveryTime" value="scheduled">
+                        Белгілі уақытта
+                    </label>
+                </div>
+                <input type="time" id="scheduledTime" style="display: none; margin-top: 10px;">
+            </div>
+            
+            <div class="order-summary">
+                <div class="summary-row">
+                    <span>Заказ сомасы:</span>
+                    <span id="summarySubtotal">0 ₸</span>
+                </div>
+                <div class="summary-row">
+                    <span>Жеткізу:</span>
+                    <span>Тегін</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Жалпы:</span>
+                    <span id="summaryTotal">0 ₸</span>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeAddressModal()">Артқа</button>
+                <button type="submit" class="btn-primary">Заказ беру</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
