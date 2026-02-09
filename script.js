@@ -152,9 +152,29 @@ function closeAddressModal() {
 // Обновление суммы в модальном окне адреса
 function updateOrderSummary() {
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Получаем дополнительные опции
+    const extraCheese = document.querySelector('input[name="extraCheese"]')?.checked || false;
+    const extraMeat = document.querySelector('input[name="extraMeat"]')?.checked || false;
+    
+    let extraCost = 0;
+    if (extraCheese) extraCost += 150;
+    if (extraMeat) extraCost += 200;
+    
+    const total = subtotal + extraCost;
+    
     document.getElementById('summarySubtotal').textContent = `${subtotal} ₸`;
-    document.getElementById('summaryTotal').textContent = `${subtotal} ₸`;
+    document.getElementById('summaryTotal').textContent = `${total} ₸`;
 }
+
+// Добавляем обработчики для чекбоксов
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработчики для чекбоксов ингредиентов
+    const ingredientCheckboxes = document.querySelectorAll('input[name="extraCheese"], input[name="extraMeat"]');
+    ingredientCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateOrderSummary);
+    });
+});
 
 // Работа с корзиной
 function addToCart(pizzaId, pizzaName, pizzaPrice) {
@@ -347,16 +367,57 @@ async function handleCheckout() {
 
 // Подтверждение заказа с адресом
 async function confirmOrder() {
+    const city = document.getElementById('deliveryCity').value;
     const address = document.getElementById('deliveryAddress').value;
     const phone = document.getElementById('deliveryPhone').value;
     const comment = document.getElementById('orderComment').value;
     
-    if (!address || !phone) {
-        showNotification('Мекенжай мен телефонды толтырыңыз', 'error');
+    if (!city || !address || !phone) {
+        showNotification('Қала, мекенжай мен телефонды толтырыңыз', 'error');
         return;
     }
     
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    // Получаем опции доставки
+    const deliveryTime = document.querySelector('input[name="deliveryTime"]:checked').value;
+    const scheduledTime = document.getElementById('scheduledTime').value;
+    
+    // Получаем опции ингредиентов
+    const removeMayonnaise = document.querySelector('input[name="removeMayonnaise"]').checked;
+    const removeOnion = document.querySelector('input[name="removeOnion"]').checked;
+    const removeTomato = document.querySelector('input[name="removeTomato"]').checked;
+    const removeOlives = document.querySelector('input[name="removeOlives"]').checked;
+    const extraCheese = document.querySelector('input[name="extraCheese"]').checked;
+    const extraMeat = document.querySelector('input[name="extraMeat"]').checked;
+    
+    // Формируем полный адрес
+    const fullAddress = `${city}, ${address}`;
+    
+    // Формируем комментарий с опциями
+    let fullComment = comment || '';
+    
+    if (deliveryTime === 'scheduled' && scheduledTime) {
+        fullComment += (fullComment ? '\n' : '') + `Жеткізу уақыты: ${scheduledTime}`;
+    }
+    
+    const ingredientOptions = [];
+    if (removeMayonnaise) ingredientOptions.push('Майонезді алып тастау');
+    if (removeOnion) ingredientOptions.push('Пиязды алып тастау');
+    if (removeTomato) ingredientOptions.push('Қызанақты алып тастау');
+    if (removeOlives) ingredientOptions.push('Зәйтүнді алып тастау');
+    if (extraCheese) ingredientOptions.push('Қосымша сыр қосу (+150 ₸)');
+    if (extraMeat) ingredientOptions.push('Қосымша ет қосу (+200 ₸)');
+    
+    if (ingredientOptions.length > 0) {
+        fullComment += (fullComment ? '\n' : '') + 'Ингредиенттер: ' + ingredientOptions.join(', ');
+    }
+    
+    // Считаем дополнительную стоимость
+    let extraCost = 0;
+    if (extraCheese) extraCost += 150;
+    if (extraMeat) extraCost += 200;
+    
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const total = subtotal + extraCost;
     
     try {
         const response = await fetch(`${API_BASE}/orders`, {
@@ -368,9 +429,10 @@ async function confirmOrder() {
             body: JSON.stringify({
                 items: cart,
                 total: total,
-                address: address,
+                address: fullAddress,
                 phone: phone,
-                comment: comment
+                comment: fullComment,
+                delivery_time: deliveryTime === 'scheduled' ? scheduledTime : null
             })
         });
         
